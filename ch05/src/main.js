@@ -4,4 +4,5 @@ import App from './App.vue'
 
 const app = createApp(App);
 // app.component('FirstChild', FirstChild);
-app.mount('#app')
+app.provide('globalMessage', 'hello!');
+app.mount('#app');
