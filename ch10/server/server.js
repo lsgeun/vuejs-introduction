@@ -6,6 +6,12 @@ const port = 3000;
 const dataFilePath = path.join(__dirname, 'data.json');
 
 app.use(express.json());
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+//   res.header('Access-Control-Allow-Headers', 'Content-Type');
+//   next();
+// });
 
 app.get('/api/data', async (req, res) => {
   try {
@@ -15,7 +21,6 @@ app.get('/api/data', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 app.post('/api/data', async (req, res) => {
   try {
     const newData = req.body;
@@ -34,7 +39,6 @@ app.post('/api/data', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 app.put('/api/data/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -52,7 +56,6 @@ app.put('/api/data/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 app.patch('/api/data/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -70,14 +73,13 @@ app.patch('/api/data/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 app.delete('/api/data/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);
     const data = await readDataFile();
     const index = data.findIndex((item) => item.id === id);
     if (index !== -1) {
-      const deletedItem = data.splice(index, 1)[0];
+      const [deletedItem] = data.splice(index, 1);
       await writeDataFile(data);
       res.json(deletedItem);
     } else {
@@ -87,12 +89,10 @@ app.delete('/api/data/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 async function readDataFile() {
   const data = await fs.readFile(dataFilePath, 'utf-8');
   return data ? JSON.parse(data) : [];
 }
-
 async function writeDataFile(data) {
   await fs.writeFile(dataFilePath, JSON.stringify(data, null, 2), 'utf-8');
 }
